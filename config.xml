@@ -55,7 +55,7 @@ PhoneGap Build Configuration
             <activity android:theme="@android:style/Theme.Translucent" android:excludeFromRecents="true"></activity>
         </edit-config>
         <config-file target="AndroidManifest.xml" parent="/manifest/application/activity">
-            <intent-filter android:label="📅 GDrive Search">
+            <intent-filter android:label="🔍 GDrive Search">
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.SEND"/>
                 <action android:name="android.intent.action.PROCESS_TEXT" />

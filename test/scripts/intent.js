@@ -8,6 +8,7 @@ var FILTER_TEXT_PREFIX = [
 ];
 
 intent_handler = function (intent) {
+    alert("成功改用local端");
     
     if (intent_handler_timer !== undefined) {
         clearTimeout(intent_handler_timer);
@@ -16,7 +17,7 @@ intent_handler = function (intent) {
     var _calendar_extras = {};
     if (typeof (intent.action) === "string"
             && intent.action === "android.intent.action.MAIN") {
-        // 單純開啟日曆
+        // 單純開啟Google Drive搜尋
     }
 
     if (typeof (intent.extras) === "object") {
