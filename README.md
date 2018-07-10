@@ -1,14 +1,15 @@
 # PhoneGapBuild-ShareToGDriveSearch
 An Android APP for sharing to search in Google Drive.
 
-- GitHub: https://github.com/pulipulichen/PhoneGap-ShareToEvent
-- PhoneGap Build: https://build.phonegap.com/apps/3176725/builds
+- GitHub: https://github.com/pulipulichen/PhoneGapBuild-ShareToGDriveSearch
+    * https://github.com/pulipulichen/PhoneGapBuild-ShareToGDriveSearch.git
+
+- PhoneGap Build: https://build.phonegap.com/apps/3231928/builds
     * https://build.phonegap.com/apps/
     * https://build.phonegap.com/people/sign_in
 
-- Install: https://bit.ly/2IKsRrk
-    * https://build.phonegap.com/apps/3176725/download/android
-![Install](https://chart.googleapis.com/chart?chs=116x116&cht=qr&chl=https://build.phonegap.com/apps/3176725/install/DNZBQy-QDMDQZAi-AzzK&chld=L|1&choe=UTF-8)
+- Install: https://build.phonegap.com/apps/3231928/download/android
+![Install](https://chart.googleapis.com/chart?chs=116x116&cht=qr&chl=https://build.phonegap.com/apps/3231928/install/7ybfhdGJNaD9RHVPonwe&chld=L|1&choe=UTF-8)
 
 
 # Reference
