@@ -17,7 +17,27 @@ intent_handler = function (intent) {
                 && _item.trim() !== "");
     };
 
-    if (typeof (intent.extras) === "object") {
+    var _url = extractURL(intent);
+    if (_url.startsWith("https://www.zotero.org/")) {
+        // https://www.zotero.org/pulipuli/items/itemKey/B57GG2BF/tag/ToRead
+        // 取出 B57GG2BF
+        var _parts = _url.split("/");
+        var _id = null;
+        for (var _i = 0; _i < _parts.length; _i++) {
+            var _str = _parts[_i];
+            if (_str === "itemKey") {
+                _id = _parts[(_i + 1)];
+                break;
+            }
+        }
+
+        // "https://drive.google.com/drive/mobile/search?q=type:folder%20R6WNVF2Z";
+        if (_id !== null) {
+            var _url = "https://drive.google.com/drive/mobile/search?q=type:folder%20" + _id;
+            window.open(_url, "_system");
+            navigator.app.exitApp();
+        }
+    } else if (typeof (intent.extras) === "object") {
         var _extras = intent.extras;
 
         var _key_list = [
@@ -98,8 +118,7 @@ intent_handler = function (intent) {
             window.open(_url, "_system");
             navigator.app.exitApp();
         }
-    }
-    else {
+    } else {
         openActivityDefault();
     }
 };
@@ -108,4 +127,29 @@ openActivityDefault = function () {
     var _url = "https://drive.google.com/drive/u/0/search?q=";
     window.open(_url, "_system");
     navigator.app.exitApp();
+};
+
+extractURL = function (intent) {
+    if (typeof (intent.extras) === "object") {
+        var _needles = ["http://", "https://"];
+        var _needles_foot = [" ", "\n"];
+        for (var _key in intent.extras) {
+            var _value = intent.extras[_key];
+            for (var _i = 0; _i < _needles.length; _i++) {
+                var _needle = _needles[_i];
+                if (_value.indexOf(_needle) > -1) {
+                    var _url = _value.substring(_value.indexOf(_needle), _value.length);
+                    for (var _j = 0; _j < _needles_foot.length; _j++) {
+                        var _needle_foot = _needles_foot[_j];
+                        if (_url.indexOf(_needle_foot) > -1) {
+                            _url = _url.substr(0, _url.indexOf(_needle_foot));
+                        }
+                    }
+
+                    _url = _url.trim();
+                    return _url;
+                }
+            }
+        }
+    }
 };

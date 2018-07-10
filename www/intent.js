@@ -2,166 +2,154 @@ var FILTER_SUBJECT = [
     "Text Scanner"
 ];
 
-var FILTER_TEXT_PREFIX = [
-    "固定\n延後\n移至收件匣\n移至...",
-    "固定\n延後\n刪除\n移至..."
-];
-
 intent_handler = function (intent) {
-    
-    if (intent_handler_timer !== undefined) {
-        clearTimeout(intent_handler_timer);
-    }
-
-    var _calendar_extras = {};
+    //alert("換了 可以嗎？");
+    //alert(JSON.stringify(intent));
     if (typeof (intent.action) === "string"
             && intent.action === "android.intent.action.MAIN") {
-        // 單純開啟日曆
+        return openActivityDefault();
     }
 
-    if (typeof (intent.extras) === "object") {
-        var _extras = intent.extras;
-        //alert(JSON.stringify(_extras));
-        
-        if (typeof (_extras["android.intent.extra.SUBJECT"]) === "string") {
-            var _subject = _extras["android.intent.extra.SUBJECT"];
-            for (var _i = 0; _i < FILTER_SUBJECT.length; _i++) {
-                var _needle = FILTER_SUBJECT[_i];
-                if (_subject === _needle) {
-                    //_text = _text.substring(_needle.length, _text.length).trim();
-                    _subject = null;
-                    break;
-                }
-            }
-            if (null !== _subject) {
-                _calendar_extras.title = _subject;
-            }
-        }
-        if (typeof (_extras["android.intent.extra.PROCESS_TEXT"]) === "string") {
-            if (typeof(_calendar_extras.title) === "undefined") {
-                _calendar_extras.title = "";
-            }
-            else {
-                _calendar_extras.title = _calendar_extras.title + " ";
-            }
-            _calendar_extras.title = _calendar_extras.title + _extras["android.intent.extra.PROCESS_TEXT"];
-        }
-        if (typeof (_extras["android.intent.extra.TEXT"]) === "string") {
-            var _text = _extras["android.intent.extra.TEXT"];
-            for (var _i = 0; _i < FILTER_TEXT_PREFIX.length; _i++) {
-                var _needle = FILTER_TEXT_PREFIX[_i];
-                //alert(JSON.stringify([_text.substr(0, _needle.length), _needle]));
-                if (_text.substr(0, _needle.length) === _needle) {
-                    _text = _text.substring(_needle.length, _text.length).trim();
-                    break;
-                }
-            }
-            //alert(_text);
-            _calendar_extras.description = _text;
-        }
-    }
+    var _search_items = [];
 
-    if (typeof (_calendar_extras.title) === "undefined"
-            && typeof (_calendar_extras.description) === "string") {
-        _calendar_extras.title = _calendar_extras.description;
-        delete _calendar_extras.description;
-    }
-
-    // 對付feedly的操作
-    if (typeof (_calendar_extras.title) === "string"
-            && typeof (_calendar_extras.description) === "undefined") {
-        var _title = _calendar_extras.title.trim();
-        var _last_space = _title.lastIndexOf(" ");
-        if (_last_space > -1) {
-            var _last_segment = _title.substring(_last_space + 1, _title.length).trim();
-            if (_last_segment.substr(0, 7) === "http://"
-                    || _last_segment.substr(0, 8) === "https://") {
-                // 是feedly模式
-                _calendar_extras.title = _title.substr(0, _last_space);
-                _calendar_extras.description = _last_segment;
-            }
-        }
-    }
-    
-    if (typeof (_calendar_extras.title) === "string"
-            && _calendar_extras.title.indexOf("\n") > 0) {
-        
-        var  _desc = "";
-        if (typeof(_calendar_extras.description) === "string") {
-            _desc = "\n\n" + _calendar_extras.description;
-        }
-        
-        var _title = _calendar_extras.title;
-        var _title1 = _title.substr(0, _title.indexOf("\n")).trim();
-        var _title2 = _title.substring(_title.indexOf("\n")+1, _title.length).trim();
-        
-        _calendar_extras.title = _title1;
-        _desc = _title2 + _desc;
-        
-        _calendar_extras.description = _desc;
-    }
-    
-    //alert(JSON.stringify(_calendar_extras));
-    
-    if (typeof(_calendar_extras.title) === "string" 
-            && typeof (_calendar_extras.description) === "undefined"
-            && _calendar_extras.title.indexOf(" ") === -1
-            && (_calendar_extras.title.startsWith("http://") || _calendar_extras.title.startsWith("https://"))) {
-        var _link = _calendar_extras.title;
-        //alert(_link);
-        $.get(_link, function (_html) {
-            if (_html === undefined) {
-                //alert(1);
-            }
-            else if (_html.indexOf("<title>") === -1) {
-                if (_html.trim() !== "") {
-                    _calendar_extras.title = _html;
-                    _calendar_extras.description = _link;
-                }
-                //alert(2);
-            }
-            else {
-                try {
-                    
-                    var _title = _html.substring(_html.indexOf("<title>") + 7, _html.indexOf("</title>")).trim();
-                    //alert([_title, _html_obj.find("title").length, _html_obj.find("title").html()]);
-                    
-                    _calendar_extras.title = decodeURIComponent(_title);
-                    _calendar_extras.description = _link;
-                } catch (e) {
-                    _calendar_extras.title = _html;
-                    _calendar_extras.description = _link;
-                }
-                //alert(_html);
-            }
-            _start_activity(_calendar_extras);
-        });
-    }
-    else {
-        _start_activity(_calendar_extras);
-    }
-};
-
-var _start_activity = function (_calendar_extras) {
-    
-    var _config = {
-        action: "android.intent.action.EDIT",
-        type: "vnd.android.cursor.item/event",
+    var _has_string = function (_item) {
+        return (typeof (_item) === "string"
+                && _item.trim() !== "");
     };
-    
-    if (typeof(_calendar_extras.title) === "string") {
-        _config.extras = _calendar_extras;
+
+    var _url = extractURL(intent);
+    if (_url.startsWith("https://www.zotero.org/")) {
+        // https://www.zotero.org/pulipuli/items/itemKey/B57GG2BF/tag/ToRead
+        // 取出 B57GG2BF
+        var _parts = _url.split("/");
+        var _id = null;
+        for (var _i = 0; _i < _parts.length; _i++) {
+            var _str = _parts[_i];
+            if (_str === "itemKey") {
+                _id = _parts[(_i + 1)];
+                break;
+            }
+        }
+
+        // "https://drive.google.com/drive/mobile/search?q=type:folder%20R6WNVF2Z";
+        if (_id !== null) {
+            var _url = "https://drive.google.com/drive/mobile/search?q=type:folder%20" + _id;
+            window.open(_url, "_system");
+            navigator.app.exitApp();
+        }
+    } else if (typeof (intent.extras) === "object") {
+        var _extras = intent.extras;
+
+        var _key_list = [
+            "android.intent.extra.SUBJECT",
+            "android.intent.extra.TEXT",
+            "android.intent.extra.PROCESS_TEXT",
+        ];
+
+        for (var _i = 0; _i < _key_list.length; _i++) {
+            if (_has_string(_extras[_key_list[_i]])) {
+                var _subject = _extras[_key_list[_i]].trim();
+                for (var _j = 0; _j < FILTER_SUBJECT.length; _j++) {
+                    var _needle = FILTER_SUBJECT[_j];
+                    if (_subject === _needle) {
+                        //_text = _text.substring(_needle.length, _text.length).trim();
+                        _subject = null;
+                        break;
+                    }
+                }
+                if (null !== _subject) {
+                    _search_items.push(_subject);
+                }
+            }
+        }
     }
 
-    window.plugins.webintent.startActivity(_config,
-            function () {
-                navigator.app.exitApp();
-            },
-            function () {
-                alert('Failed:' + JSON.stringify(_calendar_extras, null, 2));
-                navigator.app.exitApp();
-            }
-    );
+    var _test_url = _search_items.join(" ");
+    _test_url = _test_url.split("\n").join(" ");
+    var _url_list = [];
+
+    var _http_list = _test_url.split("http://");
+    for (var _i = 1; _i < _http_list.length; _i++) {
+        var item = _http_list[_i];
+        var pos = item.indexOf(" ");
+        if (pos === -1) {
+            pos = item.indexOf("\n");
+        }
+        if (pos === -1) {
+            pos = item.length;
+        }
+        _url_list.push("http://" + item.substring(0, pos));
+    }
+
+    var _https_list = _test_url.split("https://");
+    for (var _i = 1; _i < _https_list.length; _i++) {
+        var item = _https_list[_i];
+        var pos = item.indexOf(" ");
+        if (pos === -1) {
+            pos = item.indexOf("\n");
+        }
+        if (pos === -1) {
+            pos = item.length;
+        }
+        _url_list.push("https://" + item.substring(0, pos));
+    }
+
+    //alert(JSON.stringify(_url_list));
+    if (_url_list.length > 0) {
+        for (var i = 0; i < _url_list.length; i++) {
+            window.open(_url_list[i], "_system");
+        }
+        navigator.app.exitApp();
+        return;
+
+    }
+
+    if (_search_items.length > 0) {
+        if (_search_items.length === 1
+                && (_search_items[0].startsWith("http://") || _search_items[0].startsWith("https://"))) {
+            //alert(encodeURIComponent(_search_items[0]));
+            window.open(_search_items[0], "_system");
+            navigator.app.exitApp();
+        } else {
+            var _search_text = _search_items.join(" ");
+            _search_text = encodeURIComponent(_search_text);
+
+            var _url = "https://drive.google.com/drive/mobile/search?q=" + _search_text;
+            window.open(_url, "_system");
+            navigator.app.exitApp();
+        }
+    } else {
+        openActivityDefault();
+    }
 };
 
-intent_handler_timer = undefined;
+openActivityDefault = function () {
+    var _url = "https://drive.google.com/drive/u/0/search?q=";
+    window.open(_url, "_system");
+    navigator.app.exitApp();
+};
+
+extractURL = function (intent) {
+    if (typeof (intent.extras) === "object") {
+        var _needles = ["http://", "https://"];
+        var _needles_foot = [" ", "\n"];
+        for (var _key in intent.extras) {
+            var _value = intent.extras[_key];
+            for (var _i = 0; _i < _needles.length; _i++) {
+                var _needle = _needles[_i];
+                if (_value.indexOf(_needle) > -1) {
+                    var _url = _value.substring(_value.indexOf(_needle), _value.length);
+                    for (var _j = 0; _j < _needles_foot.length; _j++) {
+                        var _needle_foot = _needles_foot[_j];
+                        if (_url.indexOf(_needle_foot) > -1) {
+                            _url = _url.substr(0, _url.indexOf(_needle_foot));
+                        }
+                    }
+
+                    _url = _url.trim();
+                    return _url;
+                }
+            }
+        }
+    }
+};
