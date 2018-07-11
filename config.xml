@@ -64,7 +64,7 @@ PhoneGap Build Configuration
                 <data android:mimeType="text/plain"/>
             </intent-filter>
         </config-file>
-        <config-file target="AndroidManifest.xml" parent="/manifest/application/activity">
+        <config-file target="AndroidManifest.xml" parent="/manifest/application/activity-alias">
             <intent-filter android:label="🔍 GDrive">
                     <category
                             android:name="android.intent.category.DEFAULT"/>
