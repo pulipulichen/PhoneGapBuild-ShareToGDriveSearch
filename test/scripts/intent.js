@@ -18,7 +18,14 @@ intent_handler = function (intent) {
     };
 
     var _url = extractURL(intent);
-    if (_url.startsWith("https://www.zotero.org/")) {
+    if (typeof(intent.data) === "string" && intent.data.startsWith("http://gdrive.search/")) {
+        var _id = intent.data;
+        _id = _id.substring(_id.lastIndexOf("/")+1, _id.length);
+        var _url = "https://drive.google.com/drive/mobile/search?q=type:folder%20" + _id;
+        window.open(_url, "_system");
+        navigator.app.exitApp();
+    }
+    else if (_url !== undefined && _url.startsWith("https://www.zotero.org/")) {
         // https://www.zotero.org/pulipuli/items/itemKey/B57GG2BF/tag/ToRead
         // 取出 B57GG2BF
         var _parts = _url.split("/");
