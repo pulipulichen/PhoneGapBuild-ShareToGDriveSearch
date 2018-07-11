@@ -69,7 +69,7 @@ PhoneGap Build Configuration
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="https" android:host="drive.google.com"/>
+                <data android:scheme="gdrive_search"/>
             </intent-filter>
         </config-file>
     </platform>
