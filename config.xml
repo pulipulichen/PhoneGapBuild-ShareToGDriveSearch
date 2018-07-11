@@ -64,5 +64,21 @@ PhoneGap Build Configuration
                 <data android:mimeType="text/plain"/>
             </intent-filter>
         </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application/activity">
+            <intent-filter android:label="🔍 GDrive">
+                    <category
+                            android:name="android.intent.category.DEFAULT"/>
+                    <category
+                            android:name="android.intent.category.BROWSABLE"/>
+                    <action
+                            android:name="android.intent.action.VIEW"/>
+                    <action
+                            android:name="com.google.android.apps.docs.REQUEST_ACCESS"/>
+                    <data
+                            android:scheme="https"
+                            android:host="drive.google.com"
+                            android:pathPrefix="/drive/u/0/search" />
+            </intent-filter>
+        </config-file>
     </platform>
 </widget>
