@@ -45,6 +45,9 @@ PhoneGap Build Configuration
     
     <!-- https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-statusbar/#statusbarstyleblacktranslucent -->
     <plugin spec="https://github.com/apache/cordova-plugin-statusbar.git" source="git" />
+    
+    <!-- https://github.com/pulipulichen/cordova-plugin-statusbar -->
+    <plugin spec="https://github.com/pulipulichen/cordova-plugin-statusbar.git" source="git" /> 
     <preference name="StatusBarBackgroundColor" value="transparent" />
     <preference name="StatusBarOverlaysWebView" value="false" />
     
