@@ -80,6 +80,7 @@ PhoneGap Build Configuration
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="http" android:host="pgb-share-to-search-google-drive.pulipuli.info"/>
+                <data android:scheme="http" android:host="gdrive.search"/>
             </intent-filter>
         </config-file>
     </platform>
