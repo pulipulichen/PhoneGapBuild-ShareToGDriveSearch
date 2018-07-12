@@ -1,6 +1,7 @@
 ready = function () {
     try {
         //setStatusBarTransparent(true);
+        AndroidFullScreen.immersiveMode();
         
         window.plugins.intent.setNewIntentHandler(function (intent) {}, function (e) {});
 
