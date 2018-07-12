@@ -27,7 +27,7 @@ PhoneGap Build Configuration
     
     <!-- 防止太多權限 -->
     <preference name="permissions" value="com.android.launcher.permission.INSTALL_SHORTCUT" />
-    <preference name="StatusBarBackgroundColor" value="transparent" />
+    
     
     <!-- 只保留最低的權限 -->
     <feature name="http://api.phonegap.com/1.0/network" />
@@ -45,6 +45,7 @@ PhoneGap Build Configuration
     
     <!-- https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-statusbar/#statusbarstyleblacktranslucent -->
     <plugin spec="https://github.com/apache/cordova-plugin-statusbar.git" source="git" />
+    <preference name="StatusBarBackgroundColor" value="transparent" />
     
     <preference name="BackgroundColor" value="0x00000000"/>
     <platform name="android">
